@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПИР | Сбор</title>
+    <style>
+        :root {
+            --primary: #0a0a14;
+            --secondary: #151522;
+            --accent: #ff3366;
+            --accent-secondary: #7c4dff;
+            --text: #ffffff;
+            --text-dim: #b0b0c0;
+            --glass: rgba(25, 25, 40, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(124, 77, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 51, 102, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, var(--primary) 0%, #101020 100%);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2vw;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90vw;
+            max-width: 600px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary), transparent 70%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        
+        /* Заголовок - только слово ПИР */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(255, 51, 102, 0.4);
+        }
+        
+        /* Прогресс-бар */
+        .progress-section {
+            margin: 2.5rem 0 3.5rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        
+        .amount-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .amount-goal {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+        
+        .progress-container {
+            height: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--accent), 
+                var(--accent-secondary));
+            border-radius: 8px;
+            width: 34.6%;
+            position: relative;
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 
+                0 0 25px rgba(255, 51, 102, 0.3),
+                inset 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Кнопка доната */
+        .donate-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        .donate-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border: none;
+            padding: 1.3rem 3.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 10px 30px rgba(255, 51, 102, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .donate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 40px rgba(255, 51, 102, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+        
+        .donate-note {
+            margin-top: 1rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        
+        /* Футер */
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 0.03em;
+        }
+        
+        /* Адаптация */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .container {
+                width: 95vw;
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+            
+            .header h1 {
+                font-size: 3.5rem;
+            }
+            
+            .amount-display {
+                font-size: 2rem;
+            }
+            
+            .donate-btn {
+                width: 100%;
+                max-width: 300px;
+                padding: 1.2rem 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2.8rem;
+            }
+            
+            .amount-display {
+                font-size: 1.8rem;
+            }
+            
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .amount-goal {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ПИР</h1>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-header">
+                <div class="amount-display" id="currentAmount">17 300 ₽</div>
+                <div class="amount-goal">Цель: <span id="goalAmount">50 000 ₽</span></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="donate-section">
+            <a href="https://yookassa.ru/my/i/aKWhyhGZ5hUZ/l" target="_blank" class="donate-btn">
+                Внести вклад
+            </a>
+            <p class="donate-note">Безопасный перевод через ЮKassa</p>
+        </div>
+        
+        <footer>
+            <p>2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // НАСТРОЙКИ
+        let currentAmount = 0;
+        const goalAmount = 50000;
+        
+        function formatAmount(amount) {
+            return amount.toLocaleString('ru-RU') + ' ₽';
+        }
+        
+        function updateDisplay() {
+            const percent = Math.min((currentAmount / goalAmount) * 100, 100);
+            
+            document.getElementById('currentAmount').textContent = formatAmount(currentAmount);
+            document.getElementById('goalAmount').textContent = formatAmount(goalAmount);
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${percent}%`;
+            
+            // Сохраняем для обновления страницы
+            localStorage.setItem('pirAmount', currentAmount);
+        }
+        
+        // Загрузка
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('pirAmount');
+            if (saved) currentAmount = parseInt(saved) || currentAmount;
+            
+            updateDisplay();
+            
+            // Двойной клик для изменения суммы
+            document.getElementById('currentAmount').addEventListener('dblclick', () => {
+                const newAmount = prompt('Введите новую сумму:', currentAmount);
+                if (newAmount && !isNaN(newAmount)) {
+                    currentAmount = parseInt(newAmount);
+                    updateDisplay();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
