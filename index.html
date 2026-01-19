@@ -63,7 +63,6 @@
             pointer-events: none;
         }
         
-        /* Заголовок - только слово ПИР */
         .header {
             text-align: center;
             margin-bottom: 3rem;
@@ -79,7 +78,6 @@
             text-shadow: 0 0 40px rgba(255, 51, 102, 0.4);
         }
         
-        /* Прогресс-бар */
         .progress-section {
             margin: 2.5rem 0 3.5rem;
         }
@@ -128,7 +126,6 @@
                 inset 0 0 15px rgba(255, 255, 255, 0.2);
         }
         
-        /* Кнопка доната */
         .donate-section {
             text-align: center;
             margin-top: 3rem;
@@ -166,7 +163,6 @@
             font-weight: 300;
         }
         
-        /* Футер */
         footer {
             text-align: center;
             margin-top: 2.5rem;
@@ -178,7 +174,12 @@
             letter-spacing: 0.03em;
         }
         
-        /* Адаптация */
+        .last-updated {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
@@ -251,46 +252,76 @@
         
         <footer>
             <p>2026</p>
+            <p class="last-updated" id="lastUpdated">Обновлено: 19.01.2026 15:30</p>
         </footer>
     </div>
 
     <script>
-        // НАСТРОЙКИ
-        let currentAmount = 291;
-        const goalAmount = 50000;
+        // ========== ЕДИНСТВЕННАЯ СТРОКА ДЛЯ ИЗМЕНЕНИЯ ==========
+        // Просто меняйте это число при каждом поступлении
+        const CURRENT_AMOUNT = 291; // ← Изменяйте только эту цифру
+        // ======================================================
+        
+        const GOAL_AMOUNT = 50000;
         
         function formatAmount(amount) {
             return amount.toLocaleString('ru-RU') + ' ₽';
         }
         
         function updateDisplay() {
-            const percent = Math.min((currentAmount / goalAmount) * 100, 100);
+            const percent = Math.min((CURRENT_AMOUNT / GOAL_AMOUNT) * 100, 100);
             
-            document.getElementById('currentAmount').textContent = formatAmount(currentAmount);
-            document.getElementById('goalAmount').textContent = formatAmount(goalAmount);
+            // Обновляем сумму
+            document.getElementById('currentAmount').textContent = formatAmount(CURRENT_AMOUNT);
+            document.getElementById('goalAmount').textContent = formatAmount(GOAL_AMOUNT);
             
+            // Обновляем прогресс-бар
             const progressFill = document.getElementById('progressFill');
             progressFill.style.width = `${percent}%`;
             
-            // Сохраняем для обновления страницы
-            localStorage.setItem('pirAmount', currentAmount);
+            // Обновляем дату в футере
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('lastUpdated').textContent = `Обновлено: ${formattedDate}`;
+            
+            // Сохраняем в заголовке страницы для быстрого просмотра
+            document.title = `ПИР | ${formatAmount(CURRENT_AMOUNT)} / ${formatAmount(GOAL_AMOUNT)}`;
         }
         
-        // Загрузка
-        document.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('pirAmount');
-            if (saved) currentAmount = parseInt(saved) || currentAmount;
-            
-            updateDisplay();
-            
-            // Двойной клик для изменения суммы
-            document.getElementById('currentAmount').addEventListener('dblclick', () => {
-                const newAmount = prompt('Введите новую сумму:', currentAmount);
-                if (newAmount && !isNaN(newAmount)) {
-                    currentAmount = parseInt(newAmount);
-                    updateDisplay();
-                }
+        // Запуск при загрузке
+        document.addEventListener('DOMContentLoaded', updateDisplay);
+        
+        // Автообновление каждую минуту (на случай если откроют надолго)
+        setInterval(() => {
+            // Только обновляем время, не сумму
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
+            document.getElementById('lastUpdated').textContent = `Обновлено: ${formattedDate}`;
+        }, 60000);
+        
+        // Секретная функция для быстрого обновления (удерживать Ctrl+Alt и кликнуть на сумму)
+        document.getElementById('currentAmount').addEventListener('click', (e) => {
+            if (e.ctrlKey && e.altKey) {
+                const newAmount = prompt('Быстрое обновление суммы (только для разработчика):', CURRENT_AMOUNT);
+                if (newAmount && !isNaN(newAmount)) {
+                    // Здесь можно добавить код для сохранения на сервере
+                    // или просто показать alert с инструкцией
+                    alert(`Установите новое значение в коде:\n\nЗамените:\nconst CURRENT_AMOUNT = ${CURRENT_AMOUNT};\n\nНа:\nconst CURRENT_AMOUNT = ${newAmount};`);
+                    location.reload();
+                }
+            }
         });
     </script>
 </body>
